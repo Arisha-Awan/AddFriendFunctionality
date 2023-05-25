@@ -87,10 +87,10 @@ contract Inscrible {
          //_addFriend(msg.sender, friend_key, name);
           _addFriend(following_key, msg.sender, userList[msg.sender].username);
 
-         for(uint256 i=0;i<userList[following_key].myPosts.length;i++)
-         {
-            singleUserPostList[msg.sender].push(userList[following_key].myPosts[i]);
-         }
+        //  for(uint256 i=0;i<userList[following_key].myPosts.length;i++)
+        //  {
+        //     singleUserPostList[msg.sender].push(userList[following_key].myPosts[i]);
+        //  }
     }
     //checkAlreadyFriend
     //will check if me(msg.sender means follower) exist in the followerList of the perosn whom he is following
@@ -158,8 +158,58 @@ contract Inscrible {
             userList[msg.sender].followingsList.pop();
        }
 
+    }
+    ///Removing Follower
+
+     function removeFollower(address followerAddress) public {
+
+        
+        uint256 followerIndex;
+        bool found = false;
+
+        // Find the index of the friend in the array
+        for (uint256 i = 0; i < userList[msg.sender].followersList.length; i++) {
+            if (userList[msg.sender].followersList[i].pubkey ==followerAddress) {
+                followerIndex = i;
+                found = true;
+                break;
+            }
+        }
+        // If the friend is found, remove it
+        if (found) {
+      
+            userList[msg.sender].followersList[followerIndex] = userList[msg.sender].followersList[userList[msg.sender].followersList.length - 1];
+            // Reduce the size of the array by one
+            userList[msg.sender].followersList.pop();
+       }
+
+        uint256 followingIndex;
+        bool foundFollowing = false;
+
+        // Find the index of the friend in the array
+        for (uint256 i = 0; i < userList[followerAddress].followingsList.length; i++) {
+            if (userList[followerAddress].followingsList[i].pubkey == msg.sender) {
+                followingIndex = i;
+                foundFollowing = true;
+                break;
+            }
+        }
+        // If the friend is found, remove it
+        if (foundFollowing) {
+            // Replace the element at friendIndex with the last element
+            uint256 lengthOfFollowingList  = userList[followerAddress].followingsList.length;
+            userList[followerAddress].followingsList[followingIndex] = userList[followerAddress].followingsList[lengthOfFollowingList - 1];
+            // Reduce the size of the array by one
+            userList[followerAddress].followingsList.pop();
+       }
 
     }
+
+
+
+
+
+
 
     //GETMY FRIEND
     function getMyFollowersList(address _user) external view returns(friend[] memory){
